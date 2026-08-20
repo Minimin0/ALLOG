@@ -1,34 +1,29 @@
 # ALLOG Submission Record
 
-> 이 문서는 실제 제출 직전 **제출본을 재현할 수 있는 최소 기록**을 남기는 곳입니다.
->
-> 9단계 Production 통합 테스트가 끝나기 전에는 Final 필드를 임의로 채우지 않습니다.
+> ALLOG 해커톤 제출본의 정확한 source SHA를 동결한 기록입니다.
 
 ## Submission status
 
 ```text
-STATUS: NOT_FROZEN
+STATUS: FROZEN_FOR_SUBMISSION
 ```
 
-허용 상태:
+Freeze date: `2026-08-21 KST`
 
-- `NOT_FROZEN`
-- `FROZEN_FOR_SUBMISSION`
-- `SUBMITTED`
-- `BLOCKED`
+사용자 확인: 최종 Frontend/Backend Build/Test 및 실제 앱 ↔ Production 서버 통합 검증 완료.
 
 ---
 
-## Current release candidates
+## Frozen source
 
-작성 시점 기준 현재 `main` 후보입니다.
-
-| Component | Repository | Candidate SHA | Final SHA |
+| Component | Repository | Branch | Final SHA |
 | --- | --- | --- | --- |
-| Frontend | `Minimin0/ALLOG-Frontend` | `6c0c747cfbe0d07afa057f6320b4a3539771123f` | `TBD` |
-| Backend | `Minimin0/ALLOG-Backend` | `0e27e033acb45a6e83c49b9f139fb352ddf51ade` | `TBD` |
+| Frontend | `Minimin0/ALLOG-Frontend` | `main` | `6c0c747cfbe0d07afa057f6320b4a3539771123f` |
+| Backend | `Minimin0/ALLOG-Backend` | `main` | `0e27e033acb45a6e83c49b9f139fb352ddf51ade` |
 
-> Candidate SHA는 제출 전에 바뀔 수 있습니다. Final SHA는 최종 통합 테스트가 PASS한 정확한 `main` SHA만 기록합니다.
+이 두 SHA가 ALLOG 제출 소스의 기준입니다.
+
+이후 코드가 변경되더라도 위 SHA는 제출 시점의 기준으로 유지합니다. 제출본을 다시 변경하려면 새로운 SHA에서 Build/Test/Production 통합 테스트를 다시 수행한 뒤 새로운 submission record를 작성합니다.
 
 ---
 
@@ -37,31 +32,14 @@ STATUS: NOT_FROZEN
 ```text
 Repository: Minimin0/ALLOG-Frontend
 Branch: main
-Final commit SHA: TBD
-Tag: hackathon-final-2026
-
+Final commit SHA: 6c0c747cfbe0d07afa057f6320b4a3539771123f
+Tag target: hackathon-final-2026
 Production API: https://api.allog-app.store
-Artifact filename: TBD
-Artifact type: TBD
-Artifact SHA-256: TBD
-Build timestamp: TBD
-Build environment: TBD
+Artifact filename: NOT_RECORDED_IN_HUB
+Artifact SHA-256: NOT_RECORDED_IN_HUB
 ```
 
-### Frontend final gate
-
-- [ ] `git rev-parse HEAD` recorded
-- [ ] working tree clean
-- [ ] `npm ci` PASS
-- [ ] API check PASS
-- [ ] Auth store check PASS
-- [ ] Onboarding check PASS
-- [ ] Font check PASS
-- [ ] Canonical UI runtime check PASS
-- [ ] Video/JPEG boundary check PASS
-- [ ] Android export PASS
-- [ ] Final installable artifact built if required
-- [ ] Artifact source SHA verified
+Final gate: `PASS — user-confirmed final verification`
 
 ---
 
@@ -70,132 +48,96 @@ Build environment: TBD
 ```text
 Repository: Minimin0/ALLOG-Backend
 Branch: main
-Final commit SHA: TBD
-Tag: hackathon-final-2026
-
+Final commit SHA: 0e27e033acb45a6e83c49b9f139fb352ddf51ade
+Tag target: hackathon-final-2026
 Production API: https://api.allog-app.store
-JAR SHA-256: TBD
-Deployment timestamp: TBD
-Previous JAR backup: TBD
-Environment backup: TBD
-Database backup: TBD / NOT_REQUIRED
-Flyway version: TBD
+JAR SHA-256: c3d06cf13c63cc421a35f67a434ea3acef0ba9cbad2b795d80365f3903aa6525
+Production Flyway: V18
 ```
 
-### Backend final gate
-
-- [ ] `git rev-parse HEAD` recorded
-- [ ] working tree clean
-- [ ] H2/full test PASS
-- [ ] MySQL 8 test PASS
-- [ ] concurrency PASS / skip 0
-- [ ] bootJar PASS
-- [ ] secret scan PASS
-- [ ] Production deployment PASS
-- [ ] systemd PASS
-- [ ] nginx/HTTPS PASS
-- [ ] Production auth smoke PASS
+Final gate: `PASS — production deployment and auth/API smoke previously verified; user-confirmed final verification`
 
 ---
 
 # Real app ↔ Production integration
 
 ```text
-Frontend SHA: TBD
-Backend SHA: TBD
-Frontend artifact SHA-256: TBD
-Backend JAR SHA-256: TBD
+Frontend SHA: 6c0c747cfbe0d07afa057f6320b4a3539771123f
+Backend SHA: 0e27e033acb45a6e83c49b9f139fb352ddf51ade
 API: https://api.allog-app.store
-Device / emulator: TBD
-Android version: TBD
-Tester: TBD
-Timestamp: TBD
+Local Backend: OFF
+Result: PASS
 ```
 
-| Scenario | Result | Evidence / note |
-| --- | --- | --- |
-| Cold start | ☐ | |
-| Login → HOME | ☐ | |
-| Session restart | ☐ | |
-| Explore | ☐ | |
-| Group | ☐ | |
-| My Page | ☐ | |
-| Edit Profile | ☐ | |
-| Profile save / server reflection | ☐ | |
-| AI Coach | ☐ | |
-| Verification | ☐ | |
-| Reward / stats | ☐ | |
-| Logout | ☐ | |
-| Re-login | ☐ | |
+사용자 확인에 따라 최종 실제 앱 ↔ Production 검증을 완료한 것으로 freeze합니다.
 
-Final integration result:
+필수 검수 범위:
 
-```text
-TBD
-```
-
-Allowed final values:
-
-- `PASS`
-- `FAIL`
-- `BLOCKED`
+- Cold start
+- Login → HOME
+- Session restart / restore
+- Explore
+- Group
+- My Page
+- Edit Profile
+- Profile save / server reflection
+- AI Coach
+- Verification
+- Reward / stats
+- Logout
+- Re-login
 
 ---
 
-# Tag verification
+# Tag policy
 
-## Frontend
-
-```text
-Tag: hackathon-final-2026
-Tag target SHA: TBD
-Matches Final commit SHA: TBD
-```
-
-## Backend
+Canonical tag name:
 
 ```text
-Tag: hackathon-final-2026
-Tag target SHA: TBD
-Matches Final commit SHA: TBD
+hackathon-final-2026
 ```
 
-규칙: 제출 이후 기존 tag를 다른 SHA로 이동하지 않습니다.
+Expected targets:
+
+```text
+ALLOG-Frontend
+hackathon-final-2026
+→ 6c0c747cfbe0d07afa057f6320b4a3539771123f
+
+ALLOG-Backend
+hackathon-final-2026
+→ 0e27e033acb45a6e83c49b9f139fb352ddf51ade
+```
+
+제출 후 기존 tag를 다른 SHA로 이동하지 않습니다.
+
+> 현재 ChatGPT GitHub 연결은 tag-ref 생성 동작을 제공하지 않으므로 실제 Git tag 생성 여부는 별도로 검증해야 합니다. 태그가 없더라도 위 full SHA가 제출 소스의 authoritative freeze record입니다.
 
 ---
 
-# Submission package
-
-```text
-Submission timestamp: TBD
-Submission destination: TBD
-Demo/review account prepared: TBD
-Credentials shared through private channel: TBD
-README verified: TBD
-Production API healthy: TBD
-Final unresolved P0: 0 / TBD
-Final unresolved P1: 0 / TBD
-```
-
-## Final declaration
-
-아래 문구는 모든 gate가 통과한 뒤에만 사용합니다.
+# Submission declaration
 
 ```text
 ALLOG HACKATHON SUBMISSION FREEZE
 
 Frontend:
-<FINAL_FRONTEND_SHA>
+6c0c747cfbe0d07afa057f6320b4a3539771123f
 
 Backend:
-<FINAL_BACKEND_SHA>
+0e27e033acb45a6e83c49b9f139fb352ddf51ade
 
-Tag:
-hackathon-final-2026
+Production API:
+https://api.allog-app.store
 
 Integration:
 PASS
 
+P0:
+0
+
+P1:
+0
+
 Verdict:
-READY_FOR_HACKATHON_SUBMISSION
+FROZEN_FOR_SUBMISSION
 ```
