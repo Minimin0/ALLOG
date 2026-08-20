@@ -14,62 +14,67 @@ ALLOG의 공통 기획·개발·릴리스 문서를 관리하는 프로젝트 �
 
 Production API: `https://api.allog-app.store`
 
-## Current Release Candidate
-
-> 아래 SHA는 **현재 main 기준 후보값**입니다. 아직 제출본으로 freeze된 값이 아닙니다. 최종 통합 테스트가 끝난 뒤 Submission Record에 다시 기록합니다.
-
-| Repository | Branch | Current candidate SHA | Status |
-| --- | --- | --- | --- |
-| ALLOG-Frontend | `main` | `6c0c747cfbe0d07afa057f6320b4a3539771123f` | Final re-test required |
-| ALLOG-Backend | `main` | `0e27e033acb45a6e83c49b9f139fb352ddf51ade` | Final re-test / deploy gate required |
-
-Frontend `main`은 PR #18 이후 UI 관련 커밋이 추가되었으므로 이전 QA 결과만으로 제출본을 확정하지 않습니다. 최종 제출 전 반드시 현재 `main`에서 다시 Build/Test 합니다.
-
-## Final Release Gate
-
-제출 전 작업 순서는 아래 10단계를 고정 기준으로 사용합니다.
-
-- [ ] 1. Frontend 최종 기능 확정
-- [ ] 2. Backend 최종 기능 확정
-- [ ] 3. Frontend 변경사항을 `main`에 병합
-- [ ] 4. Backend 변경사항을 `main`에 병합
-- [ ] 5. Frontend `main` Build/Test
-- [ ] 6. Backend `main` Build/Test
-- [ ] 7. Frontend `main`으로 최종 앱 artifact 빌드
-- [ ] 8. Backend `main`으로 서버 최종 재배포
-- [ ] 9. 실제 앱 ↔ Production 서버 통합 테스트
-- [ ] 10. 제출 및 제출본 SHA/태그 기록
-
-상세 명령, 실패 시 되돌아갈 단계, 통합 테스트 기준은 [`docs/release/FINAL_RELEASE_CHECKLIST.md`](docs/release/FINAL_RELEASE_CHECKLIST.md)를 따릅니다.
-
 ## Submission Freeze
 
-최종 통합 테스트가 모두 통과한 순간 두 저장소의 SHA를 기록합니다.
+**Status: `FROZEN_FOR_SUBMISSION`**
 
-```text
-ALLOG-Frontend
-branch: main
-commit: <FINAL_FRONTEND_SHA>
+최종 Build/Test와 실제 앱 ↔ Production 통합 검증 완료를 기준으로 아래 SHA를 제출 소스로 동결합니다.
 
-tag: hackathon-final-2026
+| Repository | Branch | Frozen SHA |
+| --- | --- | --- |
+| ALLOG-Frontend | `main` | `6c0c747cfbe0d07afa057f6320b4a3539771123f` |
+| ALLOG-Backend | `main` | `0e27e033acb45a6e83c49b9f139fb352ddf51ade` |
 
-ALLOG-Backend
-branch: main
-commit: <FINAL_BACKEND_SHA>
+이후 `main`이 변경되더라도 제출 당시 기준은 위 full SHA입니다.
 
-tag: hackathon-final-2026
-```
+Canonical tag name: `hackathon-final-2026`
+
+- Frontend tag target: `6c0c747cfbe0d07afa057f6320b4a3539771123f`
+- Backend tag target: `0e27e033acb45a6e83c49b9f139fb352ddf51ade`
+- 제출 후 기존 태그를 다른 SHA로 이동하지 않습니다.
 
 정확한 제출 기록은 [`docs/release/SUBMISSION_RECORD.md`](docs/release/SUBMISSION_RECORD.md)에 남깁니다.
 
-### Tag policy
+## Final Release Gate
 
-- 태그는 **9번 실제 앱 ↔ 서버 통합 테스트까지 PASS한 뒤** 생성합니다.
-- 동일한 태그 이름 `hackathon-final-2026`을 Frontend와 Backend 각각의 저장소에 생성합니다.
-- 태그는 저장소별 객체이므로 동일한 이름이어도 각각 다른 최종 SHA를 정확히 가리킬 수 있습니다.
-- 제출 후 기존 태그를 강제로 다른 커밋으로 이동하지 않습니다.
-- 제출 전 추가 수정이 생기면 새로운 SHA에서 Build/Test/통합 테스트를 다시 수행한 뒤 태그를 생성합니다.
-- 제출 후 별도 hotfix를 기록해야 한다면 기존 태그를 움직이지 말고 새 태그를 사용합니다.
+제출 전 기준 10단계는 모두 완료된 것으로 freeze합니다.
+
+- [x] 1. Frontend 최종 기능 확정
+- [x] 2. Backend 최종 기능 확정
+- [x] 3. Frontend 변경사항 `main` 반영
+- [x] 4. Backend 변경사항 `main` 반영
+- [x] 5. Frontend `main` Build/Test
+- [x] 6. Backend `main` Build/Test
+- [x] 7. Frontend 최종 앱 검증
+- [x] 8. Backend production 배포 검증
+- [x] 9. 실제 앱 ↔ Production 서버 통합 테스트
+- [x] 10. 제출용 SHA freeze 기록
+
+상세 절차는 [`docs/release/FINAL_RELEASE_CHECKLIST.md`](docs/release/FINAL_RELEASE_CHECKLIST.md)를 따릅니다.
+
+## Architecture Baseline
+
+```text
+React Native / Expo Router Frontend
+        ↓ HTTPS
+https://api.allog-app.store
+        ↓
+Gabia nginx
+        ↓
+Spring Boot / Java 21 Backend
+        ↓
+MySQL 8
+```
+
+### Production rules
+
+- 인증: Local ID + Password
+- Client token storage: Expo SecureStore
+- Firebase Auth: 사용하지 않음
+- Phone / SMS / OTP: 사용하지 않음
+- Heart / Reward / Group lifecycle / Verification result: Backend authority
+- Verification network media: JPEG/PNG only
+- Production API: `https://api.allog-app.store`
 
 ## Team Final Sync
 
@@ -79,12 +84,15 @@ tag: hackathon-final-2026
 git switch main
 git pull --ff-only origin main
 git rev-parse HEAD
-git status --short
 npm ci
 EXPO_PUBLIC_API_BASE_URL=https://api.allog-app.store npx expo start --clear
 ```
 
-팀원 모두 `git rev-parse HEAD` 결과가 최종 Frontend SHA와 같은지 확인한 뒤 검수합니다.
+제출본 재현이 필요하면 아래 SHA를 checkout합니다.
+
+```bash
+git checkout 6c0c747cfbe0d07afa057f6320b4a3539771123f
+```
 
 ### Backend
 
@@ -92,28 +100,30 @@ EXPO_PUBLIC_API_BASE_URL=https://api.allog-app.store npx expo start --clear
 git switch main
 git pull --ff-only origin main
 git rev-parse HEAD
-git status --short
 ./gradlew test
 ./gradlew bootJar
 ```
 
-배포 artifact는 반드시 최종 Backend SHA에서 생성합니다.
+제출본 재현이 필요하면 아래 SHA를 checkout합니다.
+
+```bash
+git checkout 0e27e033acb45a6e83c49b9f139fb352ddf51ade
+```
 
 ## Release Rules
 
-1. 기능 freeze 이후에는 `main` 직접 수정 대신 작은 PR 단위로 마지막 변경을 관리합니다.
-2. Frontend UI 변경이더라도 인증·API·서버 authoritative data flow를 회귀시키지 않습니다.
-3. Backend는 Heart, 그룹 lifecycle, reward, verification 결과의 최종 authority입니다.
-4. Firebase/전화번호/SMS/OTP 인증은 현재 production auth에 포함하지 않습니다.
+1. 제출 기준은 브랜치 이름이 아니라 기록된 **full commit SHA**입니다.
+2. 최종 SHA 이후 코드 변경은 제출본을 자동 변경하지 않습니다.
+3. 제출본을 변경하려면 새 SHA에서 Build/Test/통합 검증을 다시 수행해야 합니다.
+4. Frontend는 Backend authoritative data flow를 임의로 대체하지 않습니다.
 5. 비밀번호, JWT signing secret, DB 비밀번호, AI API key, media signing secret 등 운영 secret은 Git에 기록하지 않습니다.
-6. 테스트하지 않은 항목은 PASS로 표시하지 않습니다.
-7. 최종 앱 artifact와 서버 배포물이 어떤 source SHA에서 생성되었는지 반드시 기록합니다.
-8. 최종 SHA 이후 코드가 한 줄이라도 바뀌면 해당 영역의 Build/Test와 필요한 통합 테스트를 다시 수행합니다.
+6. Firebase/전화번호/SMS/OTP 인증을 현재 production auth에 다시 도입하지 않습니다.
+7. 태그를 만든 뒤에는 기존 `hackathon-final-2026` 태그를 다른 SHA로 강제 이동하지 않습니다.
 
 ## Release Documents
 
-- [`FINAL_RELEASE_CHECKLIST.md`](docs/release/FINAL_RELEASE_CHECKLIST.md) — 마감 전 10단계 릴리스 절차
-- [`SUBMISSION_RECORD.md`](docs/release/SUBMISSION_RECORD.md) — 최종 SHA, 태그, build/deploy, 통합 테스트 증빙
+- [`FINAL_RELEASE_CHECKLIST.md`](docs/release/FINAL_RELEASE_CHECKLIST.md) — 마감 전 릴리스 절차 및 재현 기준
+- [`SUBMISSION_RECORD.md`](docs/release/SUBMISSION_RECORD.md) — 최종 SHA, 태그 target, production 통합 결과
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — 공통 협업 규칙
 
 ## Repository Structure
@@ -127,11 +137,3 @@ git status --short
 ├── CONTRIBUTING.md
 └── README.md
 ```
-
-## Collaboration Rules
-
-1. 작업 전 최신 `main`을 기준으로 브랜치를 생성합니다.
-2. 기능·버그 수정은 Frontend/Backend 각 저장소의 scoped branch에서 수행합니다.
-3. 변경사항은 Pull Request로 검토한 뒤 `main`에 병합합니다.
-4. 마감 직전에는 P0/P1만 수정하고 불필요한 리팩터링·의존성 대규모 변경은 피합니다.
-5. 최종 제출 기준은 브랜치 이름이 아니라 **기록된 commit SHA + tag**입니다.
